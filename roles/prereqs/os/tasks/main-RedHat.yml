@@ -41,12 +41,14 @@
     policy: targeted
     state: "{{ selinux_state }}"
   ignore_errors: yes
+  when: not((ansible_virtualization_type == "docker" or ansible_virtualization_type == "container") and ansible_virtualization_role == "guest")
 
 - name: Disable Transparent Huge Pages until reboot
   shell: echo never > /sys/kernel/mm/transparent_hugepage/{{ item }}
   with_items:
     - enabled
     - defrag
+  when: not((ansible_virtualization_type == "docker" or ansible_virtualization_type == "container") and ansible_virtualization_role == "guest")
 
 - name: Disable Transparent Huge Pages permanently
   lineinfile:
@@ -57,6 +59,7 @@
   with_items:
     - enabled
     - defrag
+  when: not((ansible_virtualization_type == "docker" or ansible_virtualization_type == "container") and ansible_virtualization_role == "guest")
 
 - name: Disable Transparent Huge Pages in GRUB config
   lineinfile:
@@ -67,7 +70,9 @@
     regexp: '^(GRUB_CMDLINE_LINUX=(?!.*hugepage)\"[^\"]+)(\".*)'
     line: '\1 transparent_hugepage=never\2'
   ignore_errors: yes
+  when: not((ansible_virtualization_type == "docker" or ansible_virtualization_type == "container") and ansible_virtualization_role == "guest")
 
 - name: Rebuild GRUB
   shell: grub2-mkconfig -o /boot/grub2/grub.cfg
   ignore_errors: yes
+  when: not((ansible_virtualization_type == "docker" or ansible_virtualization_type == "container") and ansible_virtualization_role == "guest")
