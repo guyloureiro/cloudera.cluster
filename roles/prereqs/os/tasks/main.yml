@@ -21,7 +21,6 @@
 - name: Apply OS-specific configurations
   include_tasks:
     file: "main-{{ ansible_os_family }}.yml"
-  when: not((ansible_virtualization_type == "docker" or ansible_virtualization_type == "container") and ansible_virtualization_role == "guest")
 
 - name: Update kernel flags
   sysctl:
